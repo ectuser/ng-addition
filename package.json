@@ -50,9 +50,6 @@
     "ts-node": "10.9.1",
     "typescript": "~5.3.2"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "dependencies": {
     "@angular/animations": "~17.1.0",
     "@angular/common": "~17.1.0",
