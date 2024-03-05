@@ -14,7 +14,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "ng-addition": ["libs/ng-addition/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
