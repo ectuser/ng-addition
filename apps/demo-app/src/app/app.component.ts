@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, afterNextRender } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { AppService } from './app.service';
+import { AsyncPipe, isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { Observable } from 'rxjs';
 
 @Component({
   standalone: true,
-  imports: [NxWelcomeComponent, RouterModule],
+  imports: [RouterModule, AsyncPipe],
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "demo": "nx run demo-app:serve"
+    "demo": "nx run demo-app:serve",
+    "test:watch": "nx run ng-addition:test --watch"
   },
   "private": true,
   "devDependencies": {

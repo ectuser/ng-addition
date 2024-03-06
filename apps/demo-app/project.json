@@ -61,6 +61,18 @@
       },
       "defaultConfiguration": "development"
     },
+    "serve:ssr": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "buildTarget": "demo-app:build:production"
+        },
+        "development": {
+          "buildTarget": "demo-app:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
