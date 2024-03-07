@@ -1,0 +1,56 @@
+name: Publish
+
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:        
+      - '*'
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    name: Prepare
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+  
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+  
+      - uses: actions/cache@v3
+        id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install packages
+        run: npm ci
+    
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    needs: prepare
+  
+    steps:
+      - name: Build
+        run: npm run build
+
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish
+    needs: build
+  
+    steps:
+      - name: Publish
+        run: npm run publish
+
+        
+    
