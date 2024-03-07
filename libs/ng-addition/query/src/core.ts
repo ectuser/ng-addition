@@ -11,8 +11,8 @@ export function baseQuery<T>(req$: Observable<T>): Observable<QueryResult<T>> {
       const result = buildErrorResult(error);
       return of(result);
     }),
-    startWith(buildLoadingResult()),
     shareReplay({ refCount: true, bufferSize: 1 }),
+    startWith(buildLoadingResult()),
   );
 
   return obs$;

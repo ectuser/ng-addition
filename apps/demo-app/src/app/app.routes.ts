@@ -5,8 +5,40 @@ export const appRoutes: Route[] = [
     path: 'client',
     loadComponent: () => import('./client/client.component').then(mod => mod.ClientRouteComponent),
     children: [
+      {
+        path: '',
+        redirectTo: 'users',
+        pathMatch: 'full'
+      },
       { 
-        path: 'todo',
+        path: 'users',
+        children: [
+          { 
+            path: '',
+            loadComponent: () => import('./todo/todo.component').then(mod => mod.TodoComponent),
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./concrete-todo/concrete-todo.component').then(mod => mod.ConcreteTodoComponent),
+          },
+          { 
+            path: 'error',
+            loadComponent: () => import('./todo-error/todo-error.component').then(mod => mod.TodoErrorComponent),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: 'server',
+    children: [
+      {
+        path: '',
+        redirectTo: 'users',
+        pathMatch: 'full'
+      },
+      {
+        path: 'users',
         children: [
           { 
             path: '',

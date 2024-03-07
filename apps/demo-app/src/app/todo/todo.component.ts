@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AppService, Todo } from '../app.service';
 import { RouterModule } from '@angular/router';
+
+import { query } from 'ng-addition/query';
+
+import { AppService } from '../app.service';
 
 @Component({
   selector: 'app-todo',
@@ -12,31 +14,23 @@ import { RouterModule } from '@angular/router';
     RouterModule,
   ],
   template: `
-  @if (loading$ | async) {
+  <h1>Users</h1>
+  @if (users().isLoading) {
     Loading...
-  }
-
-  @for (item of (data$ | async); track 'id') {
-    <div>
-      <a [routerLink]="[item.id]">{{item.title}}</a>
-    </div>
+  } @else {
+    @for (item of users().data; track 'id') {
+      <div>
+        <a [routerLink]="[item.id]">{{item.first_name}} {{item.last_name}}</a>
+      </div>
+    }
   }
 `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoComponent {
-  loading$: Observable<boolean>;
-  data$: Observable<Todo[] | undefined>;
+  public readonly users = query(this.appService.getItems()).result();
   
   constructor(
     private appService: AppService,
-  ) {
-    const {data$, isLoading$} = this.appService.getItems();
-
-    this.loading$ = isLoading$;
-    this.data$ = data$;
-
-    this.loading$.subscribe(console.log);
-    this.data$.subscribe(console.log);
-  }
+  ) {}
 }

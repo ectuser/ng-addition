@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Observable } from 'rxjs';
+
+import { query } from 'ng-addition/query';
+
 import { AppService } from '../app.service';
 
 @Component({
@@ -12,26 +14,20 @@ import { AppService } from '../app.service';
   template: `
     <h2>Error page</h2>
 
-    @if (loading$ | async) {
+    @if (user().isLoading) {
       Loading...
     }
 
-    @if (error$ | async) {
-      Error: {{error$ | async | json}}
+    @if (user().isError) {
+      Error: {{user().error | json}}
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoErrorComponent {
-  loading$: Observable<boolean>;
-  error$: Observable<Error | undefined>;
+  public readonly user = query(this.appService.getItemError()).result();
 
   constructor(
     private appService: AppService,
-  ) {
-    const {isLoading$, error$} = this.appService.getItemsError();
-
-    this.loading$ = isLoading$;
-    this.error$ = error$;
-  }
+  ) {}
 }

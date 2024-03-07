@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
     RouterModule
   ],
   template: `
-    <h2>Client:</h2>
     @if (isBrowser) {
       <router-outlet></router-outlet>
     }

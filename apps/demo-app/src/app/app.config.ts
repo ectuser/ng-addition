@@ -1,13 +1,20 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { delayInterceptor } from './delay.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(),
-    provideRouter(appRoutes),
-    provideHttpClient(withFetch()),
+    provideRouter(
+      appRoutes,
+      withComponentInputBinding()
+    ),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([delayInterceptor]),
+    ),
   ],
 };
