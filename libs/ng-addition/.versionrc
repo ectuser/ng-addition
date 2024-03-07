@@ -1,0 +1,5 @@
+{
+  "path": ".",
+  "tag-prefix": "ng-addition-v",
+  "releaseCommitMessageFormat": "chore(release): ng-addition@{{currentTag}}"
+}
