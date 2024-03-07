@@ -9,7 +9,7 @@
     "test:watch": "npm run test -- --watch",
     "build": "nx run ng-addition:build:production",
     "publish": "npm publish",
-    "release": "npm run --cwd libs/ng-addition standard-version"
+    "release": "nx run ng-addition:release"
   },
   "private": true,
   "devDependencies": {
