@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.1.0](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.0.3-test-0.5...ng-addition-v0.1.0) (2024-03-08)
+
 ### [0.0.3-test-0.5](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.0.3-test-0.4...ng-addition-v0.0.3-test-0.5) (2024-03-08)
 
 ### [0.0.3-test-0.4](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.0.3-test-0.3...ng-addition-v0.0.3-test-0.4) (2024-03-08)

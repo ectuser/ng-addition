@@ -1,6 +1,6 @@
 {
   "name": "ng-addition",
-  "version": "0.0.3-test-0.5",
+  "version": "0.1.0",
   "peerDependencies": {
     "@angular/common": "^17.1.0",
     "@angular/core": "^17.1.0"
