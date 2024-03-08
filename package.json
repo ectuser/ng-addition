@@ -8,7 +8,7 @@
     "test": "nx run ng-addition:test",
     "test:watch": "npm run test -- --watch",
     "build": "nx run ng-addition:build:production",
-    "publish": "npm publish",
+    "publish": "nx run ng-addition:publish",
     "release": "nx run ng-addition:release",
     "commit": "git-cz"
   },
