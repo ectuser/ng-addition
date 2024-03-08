@@ -1,8 +1,10 @@
-import { Observable, shareReplay } from 'rxjs';
-import { QueryResult } from './request';
-import { baseQuery } from './core';
 import { Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+
+import { Observable, shareReplay } from 'rxjs';
+
+import { QueryResult } from './request';
+import { baseQuery } from './core';
 
 export function query<T>(
   req$: Observable<T>,
@@ -18,3 +20,5 @@ export function query<T>(
     }
   };
 }
+
+export { QueryResult } from './request';
