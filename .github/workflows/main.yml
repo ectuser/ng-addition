@@ -2,11 +2,10 @@ name: Publish
 
 on:
   push:
-    # Pattern matched against refs/tags
     tags:        
       - '**'
 jobs:
-  prepare:
+  publish:
     runs-on: ubuntu-latest
     name: Prepare
 
@@ -42,24 +41,6 @@ jobs:
         run: npm run publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    
-  # build:
-  #   runs-on: ubuntu-latest
-  #   name: Build
-  #   needs: prepare
-  
-  #   steps:
-  #     - name: Build
-  #       run: npm run build
-
-  # publish:
-  #   runs-on: ubuntu-latest
-  #   name: Publish
-  #   needs: build
-  
-  #   steps:
-  #     - name: Publish
-  #       run: npm run publish
 
         
     
