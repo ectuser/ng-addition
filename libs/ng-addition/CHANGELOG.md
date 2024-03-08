@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.1.0...ng-addition-v0.1.1) (2024-03-08)
+
+
+### Bug Fixes
+
+* 🐛 add export missing type declaration ([6b744d8](https://github.com/ectuser/ng-addition/commit/6b744d898b1500e213e0070da8899245a42f3437))
+
 ## [0.1.0](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.0.3-test-0.5...ng-addition-v0.1.0) (2024-03-08)
 
 ### [0.0.3-test-0.5](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.0.3-test-0.4...ng-addition-v0.0.3-test-0.5) (2024-03-08)
