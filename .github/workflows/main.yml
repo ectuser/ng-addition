@@ -33,24 +33,30 @@ jobs:
 
       - name: Install packages
         run: npm ci
-    
-  build:
-    runs-on: ubuntu-latest
-    name: Build
-    needs: prepare
-  
-    steps:
+      
       - name: Build
         run: npm run build
 
-  publish:
-    runs-on: ubuntu-latest
-    name: Publish
-    needs: build
-  
-    steps:
       - name: Publish
         run: npm run publish
+    
+  # build:
+  #   runs-on: ubuntu-latest
+  #   name: Build
+  #   needs: prepare
+  
+  #   steps:
+  #     - name: Build
+  #       run: npm run build
+
+  # publish:
+  #   runs-on: ubuntu-latest
+  #   name: Publish
+  #   needs: build
+  
+  #   steps:
+  #     - name: Publish
+  #       run: npm run publish
 
         
     
