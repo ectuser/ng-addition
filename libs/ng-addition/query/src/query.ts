@@ -9,7 +9,8 @@ import { baseQuery } from './core';
 
 /**
  * 
- * This utility function `query` is used for transforming fetch response to a `QueryResult`.
+ * This utility function `query` is used for transforming fetch response to a `QueryResult` 
+ * which contains useful properties as `isLoading`, `isError`, `error`.
  * 
  * 
  * @param req$ - Source Observable. Usually it's a request.
