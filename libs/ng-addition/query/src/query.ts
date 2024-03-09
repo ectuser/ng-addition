@@ -6,6 +6,45 @@ import { Observable, shareReplay } from 'rxjs';
 import { QueryResult } from './request';
 import { baseQuery } from './core';
 
+
+/**
+ * 
+ * This utility function `query` is used for transforming fetch response to a `QueryResult`.
+ * 
+ * 
+ * @param req$ - Source Observable. Usually it's a request.
+ * 
+ * 
+ * It returns an object with a field: `result$` which represents an Observable result.
+ * It also returns a function `result()` that transforms `result$` Observable field into a `Signal`. 
+ * 
+ * Important note: it's mandatory to call `result()` function inside Angular reactive context:
+ * Properties declarations and `constructor`.
+ * 
+ * Usage example:
+ * 
+ * ```
+ * Component({
+ *  template: `
+ *    if (postsResult().isLoading) {
+ *      Loading...
+ *    } else if (postsResult().isError) {
+*       Error - {{postsResult().error | json}}
+*     } else {
+*       Posts: 
+*       for (let post of postsResult().data) {
+*         {{post.title}}
+*       }
+*     }
+ *  `
+ * })
+ * export class ExampleComponent {
+ *  postsResult = query(this.postsApiService.fetchPosts()).result() // `this.posts` is a signal
+ * 
+ *  constructor(private postsApiService: PostsApiService) {}
+ * }
+ * ```
+ */
 export function query<T>(
   req$: Observable<T>,
 ) {
