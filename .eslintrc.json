@@ -18,7 +18,8 @@
               }
             ]
           }
-        ]
+        ],
+        "angular-eslint/directive-selector": "off"
       }
     },
     {

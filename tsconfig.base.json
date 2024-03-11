@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "ng-addition": ["libs/ng-addition/src/index.ts"],
-      "ng-addition/query": ["libs/ng-addition/query/src/index.ts"]
+      "ng-addition/query": ["libs/ng-addition/query/src/index.ts"],
+      "ng-addition/deferred-loader": ["libs/ng-addition/deferred-loader/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

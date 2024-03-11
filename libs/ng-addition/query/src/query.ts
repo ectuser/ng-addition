@@ -24,7 +24,7 @@ import { baseQuery } from './core';
  * 
  * Usage example:
  * 
- * ```
+ * ```typescript
  * Component({
  *  template: `
  *    if (postsResult().isLoading) {
