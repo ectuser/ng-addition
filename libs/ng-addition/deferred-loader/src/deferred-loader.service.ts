@@ -19,7 +19,7 @@ export class DeferredLoaderService {
         // Delay emitting false to ensure it stays visible for at least `minLoadingTime`
         return of(false).pipe(
           delay(loadingOptions.minLoadingTime - elapsedTime),
-          tap(() => this.lastEmitTime = Date.now())
+          tap(() => this.lastEmitTime = Date.now()),
         );
       } else {
         // If enough time has passed since the last false emission, emit immediately
@@ -31,7 +31,7 @@ export class DeferredLoaderService {
     // If loading is true, emit loading within `loadingThreshold`
     return of(true).pipe(
       delay(loadingOptions.loadingThreshold),
-      tap(() => this.lastEmitTime = Date.now())
+      tap(() => this.lastEmitTime = Date.now()),
     );
   }
 }

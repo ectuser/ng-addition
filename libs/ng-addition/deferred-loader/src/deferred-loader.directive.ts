@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, Inject, computed } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
-import { Observable, defer, switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 
 import { DeferredLoaderOptions, DEFERRED_LOADER_OPTIONS } from './deferred-loader-settings';
 import { DeferredLoaderService } from './deferred-loader.service';
@@ -82,11 +82,9 @@ export class DeferredLoaderDirective {
   ) {
     this.deferredLoaderService = new DeferredLoaderService();
 
-    this.showLoader$ = defer(() => {
-      return toObservable(this.computedInputs).pipe(
-        switchMap(({deferredLoader, loadingOptions}) => this.deferredLoaderService.calculateLoadingState(deferredLoader, loadingOptions))
-      );
-    });
+    this.showLoader$ = toObservable(this.computedInputs).pipe(
+      switchMap(({deferredLoader, loadingOptions}) => this.deferredLoaderService.calculateLoadingState(deferredLoader, loadingOptions))
+    );
 
     this.showLoader$.pipe(takeUntilDestroyed()).subscribe(loading => {
       this.clearViewContainer();

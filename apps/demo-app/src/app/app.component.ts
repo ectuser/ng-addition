@@ -1,8 +1,6 @@
-import { Component, Inject, PLATFORM_ID, afterNextRender } from '@angular/core';
+import { Component } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AppService } from './app.service';
-import { AsyncPipe, isPlatformBrowser, isPlatformServer } from '@angular/common';
-import { Observable } from 'rxjs';
 
 @Component({
   standalone: true,

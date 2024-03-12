@@ -56,7 +56,7 @@ export class ConcreteTodoComponent {
     const id = this.id();
 
     if (id === undefined) {
-      return undefined
+      return undefined;
     }
 
     const numb = Number(id);
@@ -86,8 +86,6 @@ export class ConcreteTodoComponent {
     private appService: AppService,
     private route: ActivatedRoute,
   ) {
-    console.log('constructor');
-
     this.previousId = computed(() => {
       const id = this.idNumber();
 

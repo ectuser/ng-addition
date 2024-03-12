@@ -1,7 +1,9 @@
 import { Inject, Pipe, PipeTransform } from '@angular/core';
+
+import { Observable } from 'rxjs';
+
 import { DEFERRED_LOADER_OPTIONS, DeferredLoaderOptions } from './deferred-loader-settings';
 import { DeferredLoaderService } from './deferred-loader.service';
-import { Observable } from 'rxjs';
 
 // WIP: output will be changed from boolean to some object.
 
@@ -12,9 +14,7 @@ import { Observable } from 'rxjs';
 export class DeferredLoaderPipe implements PipeTransform {
   private deferredLoaderService: DeferredLoaderService;
 
-  constructor(
-    @Inject(DEFERRED_LOADER_OPTIONS) private loaderOptions: DeferredLoaderOptions,
-  ) {
+  constructor(@Inject(DEFERRED_LOADER_OPTIONS) private loaderOptions: DeferredLoaderOptions) {
     this.deferredLoaderService = new DeferredLoaderService();
   }
 
@@ -26,7 +26,7 @@ export class DeferredLoaderPipe implements PipeTransform {
 
     const options: DeferredLoaderOptions = {
       ...this.loaderOptions,
-        ...paramsOptions,
+      ...paramsOptions,
     };
 
     return this.deferredLoaderService.calculateLoadingState(showLoader, options);
