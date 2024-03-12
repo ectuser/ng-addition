@@ -22,15 +22,17 @@ import { AppService } from '../app.service';
     <div>
       @if (user$ | async; as user) {
         @if (user.isLoading) {
-        Loading...
-      } @else if (user.isError) {
-        Error: {{user.error | json}}
-      } @else {
-        <h2>Concrete user - {{user.data.first_name}}</h2>
-        <div>
-          {{user.data | json}}
-        </div>
-      }
+          Loading...
+        } @else {
+          <h2>Concrete user - {{user.data?.first_name}}</h2>
+          <div>
+            {{user.data | json}}
+          </div>
+        }
+      
+        @if (user.isError) {
+          Error: {{user.error | json}}
+        }
       }
     </div>
     <br>

@@ -24,7 +24,7 @@ import { baseQuery } from './core';
  * 
  * Usage example:
  * 
- * ```
+ * ```typescript
  * Component({
  *  template: `
  *    if (postsResult().isLoading) {
@@ -40,7 +40,7 @@ import { baseQuery } from './core';
  *  `
  * })
  * export class ExampleComponent {
- *  postsResult = query(this.postsApiService.fetchPosts()).result() // `this.posts` is a signal
+ *  postsResult = query(this.postsApiService.fetchPosts()).result() // `this.postsResult` is a signal
  * 
  *  constructor(private postsApiService: PostsApiService) {}
  * }

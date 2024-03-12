@@ -5,6 +5,8 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { delayInterceptor } from './delay.interceptor';
 
+import { provideDeferredLoaderSettings } from 'ng-addition/deferred-loader';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(),
@@ -16,5 +18,6 @@ export const appConfig: ApplicationConfig = {
       withFetch(),
       withInterceptors([delayInterceptor]),
     ),
+    provideDeferredLoaderSettings({minLoadingTime: 600, loadingThreshold: 1100}),
   ],
 };
