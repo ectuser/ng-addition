@@ -66,8 +66,6 @@ export class ConcreteTodoComponent {
 
   public readonly user$ = this.route.params.pipe(
     switchMap(params => {
-      console.log(params);
-
       const id = params['id'];
 
       if (!id) {

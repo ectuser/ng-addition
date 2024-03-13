@@ -6,9 +6,6 @@ export class DeferredLoaderService {
   private lastEmitTime = 0;
 
   public calculateLoadingState(showLoader: boolean | undefined, loadingOptions: DeferredLoaderOptions): Observable<boolean> {
-    console.log({showLoader, loadingOptions});
-    
-
     const currentTime = Date.now();
 
     if (!showLoader) {
