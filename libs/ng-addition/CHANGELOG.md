@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.1](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.2.0...ng-addition-v0.2.1) (2024-03-13)
+
+
+### Bug Fixes
+
+* 🐛 remove redundant console.log ([3f06639](https://github.com/ectuser/ng-addition/commit/3f0663977f6b9265988f387f59f49a64b78e250d))
+
 ## [0.2.0](https://github.com/ectuser/ng-addition/compare/ng-addition-v0.1.2...ng-addition-v0.2.0) (2024-03-12)
 
 
