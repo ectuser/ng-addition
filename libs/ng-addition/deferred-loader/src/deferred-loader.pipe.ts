@@ -3,9 +3,7 @@ import { Inject, Pipe, PipeTransform } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { DEFERRED_LOADER_OPTIONS, DeferredLoaderOptions } from './deferred-loader-settings';
-import { DeferredLoaderService } from './deferred-loader.service';
-
-// WIP: output will be changed from boolean to some object.
+import { DeferredLoaderService, LoadingState } from './deferred-loader.service';
 
 @Pipe({
   name: 'deferredLoader',
@@ -18,7 +16,7 @@ export class DeferredLoaderPipe implements PipeTransform {
     this.deferredLoaderService = new DeferredLoaderService();
   }
 
-  transform(showLoader: boolean | undefined, loadingThreshold?: number, minLoadingTime?: number): Observable<boolean> {
+  transform(showLoader: boolean | undefined, loadingThreshold?: number, minLoadingTime?: number): Observable<LoadingState> {
     const paramsOptions = {
       loadingThreshold: loadingThreshold ?? this.loaderOptions.loadingThreshold,
       minLoadingTime: minLoadingTime ?? this.loaderOptions.minLoadingTime,

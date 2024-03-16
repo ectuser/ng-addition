@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, Inject, computed } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
-import { Observable, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs';
 
 import { DeferredLoaderOptions, DEFERRED_LOADER_OPTIONS } from './deferred-loader-settings';
-import { DeferredLoaderService } from './deferred-loader.service';
+import { DeferredLoaderService, LoadingState } from './deferred-loader.service';
 
 
 /**
@@ -63,7 +63,6 @@ export class DeferredLoaderDirective {
     };
   });
 
-  private readonly showLoader$: Observable<boolean>;
   private readonly computedInputs = computed(() => ({
     deferredLoader: this.deferredLoader(),
     deferredLoaderElse: this.deferredLoaderElse(),
@@ -82,15 +81,15 @@ export class DeferredLoaderDirective {
   ) {
     this.deferredLoaderService = new DeferredLoaderService();
 
-    this.showLoader$ = toObservable(this.computedInputs).pipe(
+    const showLoader$ = toObservable(this.computedInputs).pipe(
       switchMap(({deferredLoader, loadingOptions}) => this.deferredLoaderService.calculateLoadingState(deferredLoader, loadingOptions))
     );
 
-    this.showLoader$.pipe(takeUntilDestroyed()).subscribe(loading => {
+    showLoader$.pipe(takeUntilDestroyed()).subscribe(loadingState => {
       this.clearViewContainer();
-      if (loading) {
+      if (loadingState === LoadingState.Loading) {
         this.showAppliedTemplate();
-      } else {
+      } else if (loadingState === LoadingState.Finished) {
         this.showElseTemplate();
       }
 
