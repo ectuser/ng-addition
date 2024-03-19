@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, Inject, computed } from '@angular/core';
+import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, computed } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { switchMap } from 'rxjs';
 
-import { DeferredLoaderOptions, DEFERRED_LOADER_OPTIONS } from './deferred-loader-settings';
-import { DeferredLoaderService, LoadingState } from './deferred-loader.service';
+import { DeferredLoaderOptions } from './deferred-loader-settings';
+import { DeferredLoaderService } from './deferred-loader.service';
+import { useSettings } from './use-settings';
 
 
 /**
@@ -52,29 +53,19 @@ export class DeferredLoaderDirective {
    */
   public readonly deferredLoaderMinLoadingTime = input<DeferredLoaderOptions['minLoadingTime']>();
 
-  private loadingOptions = computed(() => {
-    const loadingThreshold = this.deferredLoaderLoadingThreshold() ?? this.loaderOptions.loadingThreshold;
-    const minLoadingTime = this.deferredLoaderMinLoadingTime() ?? this.loaderOptions.minLoadingTime;
-
-    return {
-      ...this.loaderOptions,
-      loadingThreshold,
-      minLoadingTime,
-    };
-  });
+  private options = useSettings(this.deferredLoaderLoadingThreshold, this.deferredLoaderMinLoadingTime);
 
   private readonly computedInputs = computed(() => ({
     deferredLoader: this.deferredLoader(),
     deferredLoaderElse: this.deferredLoaderElse(),
     deferredLoaderLoadingThreshold: this.deferredLoaderLoadingThreshold(),
     deferredLoaderMinLoadingTime: this.deferredLoaderMinLoadingTime(),
-    loadingOptions: this.loadingOptions(),
+    loadingOptions: this.options(),
   }));
 
   private deferredLoaderService: DeferredLoaderService;
 
   constructor(
-    @Inject(DEFERRED_LOADER_OPTIONS) private loaderOptions: DeferredLoaderOptions,
     private viewContainer: ViewContainerRef,
     private templateRef: TemplateRef<unknown>,
     private cdr: ChangeDetectorRef,
@@ -87,9 +78,9 @@ export class DeferredLoaderDirective {
 
     showLoader$.pipe(takeUntilDestroyed()).subscribe(loadingState => {
       this.clearViewContainer();
-      if (loadingState === LoadingState.Loading) {
+      if (loadingState === 'loading') {
         this.showAppliedTemplate();
-      } else if (loadingState === LoadingState.Finished) {
+      } else if (loadingState === 'finished') {
         this.showElseTemplate();
       }
 

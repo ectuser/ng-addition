@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { query } from 'ng-addition/query';
-import { DeferredLoaderDirective } from 'ng-addition/deferred-loader';
+import { DeferredLoaderComponent, DeferredLoaderDirective } from 'ng-addition/deferred-loader';
 
 import { AppService } from '../app.service';
 
@@ -14,6 +14,7 @@ import { AppService } from '../app.service';
     CommonModule,
     RouterModule,
     DeferredLoaderDirective,
+    DeferredLoaderComponent,
   ],
   template: `
   <h1>Users</h1>
@@ -27,6 +28,23 @@ import { AppService } from '../app.service';
       </div>
     }
   </ng-template>
+
+  <h2>Component usage:</h2>
+
+  <deferred-loader [isLoading]="users().isLoading">
+    <ng-template #content>
+      @for (item of users().data; track 'id') {
+        <div>
+          <a [routerLink]="[item.id]">{{item.first_name}} {{item.last_name}}</a>
+        </div>
+      }
+    </ng-template>
+
+
+    <ng-template #loader>
+      <span>Loading...</span>
+    </ng-template>
+  </deferred-loader>
 `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -2,11 +2,13 @@ import { Observable, delay, of, startWith, tap } from 'rxjs';
 
 import { DeferredLoaderOptions } from './deferred-loader-settings';
 
-export enum LoadingState {
-  Started = 'started',
-  Loading = 'loading',
-  Finished = 'finished',
-}
+export type LoadingState = 'started' | 'loading' | 'finished';
+
+const states: Record<LoadingState, LoadingState> = {
+  started: 'started',
+  loading: 'loading',
+  finished: 'finished'
+};
 
 export class DeferredLoaderService {
   private lastEmitTime = 0;
@@ -20,23 +22,23 @@ export class DeferredLoaderService {
       
       if (elapsedTime < loadingOptions.minLoadingTime) {
         // Delay emitting false to ensure it stays visible for at least `minLoadingTime`
-        return of(LoadingState.Finished).pipe(
+        return of(states.finished).pipe(
           delay(loadingOptions.minLoadingTime - elapsedTime),
           tap(() => this.lastEmitTime = Date.now()),
-          startWith(LoadingState.Loading),
+          startWith(states.loading),
         );
       } else {
         // If enough time has passed since the last false emission, emit immediately
         this.lastEmitTime = Date.now();
-        return of(LoadingState.Finished);
+        return of(states.finished);
       }
     }
 
     // If loading is true, emit loading within `loadingThreshold`
-    return of(LoadingState.Loading).pipe(
+    return of(states.loading).pipe(
       delay(loadingOptions.loadingThreshold),
       tap(() => this.lastEmitTime = Date.now()),
-      startWith(LoadingState.Started),
+      startWith(states.started),
     );
   }
 }
