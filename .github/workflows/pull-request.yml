@@ -4,7 +4,7 @@ on:
   pull_request:
 
 jobs:
-  is-draft:
+  if-not-draft:
     if: github.event.pull_request.draft == true
     runs-on: ubuntu-latest
     steps:
@@ -14,6 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
+    needs: if-not-draft
 
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +25,7 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     name: Test and lint
+    needs: if-not-draft
 
     steps:
       - uses: actions/checkout@v4
