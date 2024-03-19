@@ -25,4 +25,4 @@ runs:
 
     - name: Install packages
       shell: bash
-      run: npm ci
+      run: npm install
