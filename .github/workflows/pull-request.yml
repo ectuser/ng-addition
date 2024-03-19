@@ -1,0 +1,13 @@
+name: Pull request
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+
+    steps:
+      - name: Prepare
+        uses: ./.github/workflows/prepare
