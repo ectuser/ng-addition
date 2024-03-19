@@ -9,8 +9,12 @@ jobs:
     name: Build
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout actions
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            .github/workflows
+          path: workflows
 
       - name: Prepare
-        uses: ./.github/workflows/prepare.yml
+        uses: ./workflows/.github/workflows/setup_base
