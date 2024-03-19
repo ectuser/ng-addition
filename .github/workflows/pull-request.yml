@@ -11,5 +11,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Prepare
-        shell: bash
         uses: ./.github/actions/prepare
