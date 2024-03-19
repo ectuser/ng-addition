@@ -4,10 +4,24 @@ on:
   pull_request:
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
-    name: Prepare
+    name: Build
 
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/prepare
+      - name: Build
+        uses: npm run build
+
+  checks:
+    runs-on: ubuntu-latest
+    name: Test and lint
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/prepare
+      - name: Lint
+        uses: npm run lint
+      - name: Test
+        uses: npm run test
