@@ -24,4 +24,5 @@ runs:
           ${{ runner.os }}-node-
 
     - name: Install packages
+      shell: bash
       run: npm ci
