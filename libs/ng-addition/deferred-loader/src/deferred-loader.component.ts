@@ -1,11 +1,8 @@
 import { Component, TemplateRef, ViewContainerRef, contentChild, input, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
-import { BehaviorSubject, Observable, distinctUntilChanged, filter, switchMap, take } from 'rxjs';
-
-import { useSettings } from './use-settings';
 import { DeferredLoaderOptions } from './deferred-loader-settings';
-import { DeferredLoaderService } from './deferred-loader.service';
+import { DeferredLoaderState } from './deferred-loader-state';
 
 @Component({
   selector: 'deferred-loader',
@@ -39,39 +36,24 @@ export class DeferredLoaderComponent {
 
   private readonly ref = viewChild.required('ref', {read: ViewContainerRef});
 
-
-  private options = useSettings(this.loadingThreshold, this.minLoadingTime);
-
-  private readonly deferredLoaderService$ = new BehaviorSubject<DeferredLoaderService | undefined>(undefined);
-  private readonly serviceInitialized$ = this.deferredLoaderService$.pipe(filter(value => !!value)) as Observable<DeferredLoaderService>;
+  private readonly deferredLoaderState = new DeferredLoaderState(this.loadingThreshold, this.minLoadingTime);
 
   constructor() {
-    toObservable(this.options).pipe(
-      take(1),
-      takeUntilDestroyed()
-    ).subscribe((options) => {
-      this.deferredLoaderService$.next(new DeferredLoaderService(options));
-    });
+    const loading$ = toObservable(this.isLoading);
 
-    this.serviceInitialized$.pipe(
-      switchMap((service) => {
-        return toObservable(this.isLoading).pipe(
-          switchMap(isLoading => service.calculateLoadingState(isLoading)),
-          distinctUntilChanged(),
-        )
-      }),
-      takeUntilDestroyed(),
-    ).subscribe((result) => {
-      this.ref().clear();
+    this.deferredLoaderState.handleIsLoading(loading$)
+      .pipe(takeUntilDestroyed())
+      .subscribe(result => {
+        this.ref().clear();
 
-      if (result === 'started') {
-        this.renderPlaceholder();
-      } else if (result === 'loading') {
-        this.renderLoader();
-      } else {
-        this.renderContent();
-      }
-    });
+        if (result === 'started') {
+          this.renderPlaceholder();
+        } else if (result === 'loading') {
+          this.renderLoader();
+        } else {
+          this.renderContent();
+        }
+      });
   }
 
   private renderPlaceholder() {

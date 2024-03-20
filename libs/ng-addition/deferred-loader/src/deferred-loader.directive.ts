@@ -1,11 +1,8 @@
-import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, computed } from '@angular/core';
+import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, booleanAttribute } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
-import { switchMap } from 'rxjs';
-
 import { DeferredLoaderOptions } from './deferred-loader-settings';
-import { DeferredLoaderService } from './deferred-loader.service';
-import { useSettings } from './use-settings';
+import { DeferredLoaderState } from './deferred-loader-state';
 
 
 /**
@@ -32,7 +29,7 @@ import { useSettings } from './use-settings';
   standalone: true,
 })
 export class DeferredLoaderDirective {
-  public readonly deferredLoader = input.required<boolean | undefined>();
+  public readonly deferredLoader = input.required<boolean, boolean | string | undefined | null>({transform: booleanAttribute});
   /**
    * Template to display when loading is false
    */
@@ -53,39 +50,28 @@ export class DeferredLoaderDirective {
    */
   public readonly deferredLoaderMinLoadingTime = input<DeferredLoaderOptions['minLoadingTime']>();
 
-  private readonly options = useSettings(this.deferredLoaderLoadingThreshold, this.deferredLoaderMinLoadingTime);
-
-  private readonly computedInputs = computed(() => ({
-    deferredLoader: this.deferredLoader(),
-    deferredLoaderElse: this.deferredLoaderElse(),
-    deferredLoaderLoadingThreshold: this.deferredLoaderLoadingThreshold(),
-    deferredLoaderMinLoadingTime: this.deferredLoaderMinLoadingTime(),
-    loadingOptions: this.options(),
-  }));
-
-  private deferredLoaderService: DeferredLoaderService;
+  private readonly deferredLoaderState = new DeferredLoaderState(this.deferredLoaderLoadingThreshold, this.deferredLoaderMinLoadingTime);
 
   constructor(
     private viewContainer: ViewContainerRef,
     private templateRef: TemplateRef<unknown>,
     private cdr: ChangeDetectorRef,
   ) {
-    this.deferredLoaderService = new DeferredLoaderService();
 
-    const showLoader$ = toObservable(this.computedInputs).pipe(
-      switchMap(({deferredLoader, loadingOptions}) => this.deferredLoaderService.calculateLoadingState(deferredLoader, loadingOptions))
-    );
+    const loading$ = toObservable(this.deferredLoader);
 
-    showLoader$.pipe(takeUntilDestroyed()).subscribe(loadingState => {
-      this.clearViewContainer();
-      if (loadingState === 'loading') {
-        this.showAppliedTemplate();
-      } else if (loadingState === 'finished') {
-        this.showElseTemplate();
-      }
+    this.deferredLoaderState.handleIsLoading(loading$)
+      .pipe(takeUntilDestroyed())
+      .subscribe(loadingState => {
+        this.clearViewContainer();
+        if (loadingState === 'loading') {
+          this.showAppliedTemplate();
+        } else if (loadingState === 'finished') {
+          this.showElseTemplate();
+        }
 
-      this.cdr.markForCheck();
-    });
+        this.cdr.markForCheck();
+      });
   }
 
   private clearViewContainer() {
