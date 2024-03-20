@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { DEFERRED_LOADER_OPTIONS, DeferredLoaderOptions } from './deferred-loader-settings';
 import { DeferredLoaderService, LoadingState } from './deferred-loader.service';
 
+// WIP
+
 @Pipe({
   name: 'deferredLoader',
   standalone: true,

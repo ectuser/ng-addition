@@ -1,7 +1,7 @@
-import { Component, TemplateRef, ViewContainerRef, computed, contentChild, effect, input, viewChild } from '@angular/core';
+import { Component, TemplateRef, ViewContainerRef, contentChild, input, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
-import { distinctUntilChanged, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, distinctUntilChanged, filter, switchMap, take } from 'rxjs';
 
 import { useSettings } from './use-settings';
 import { DeferredLoaderOptions } from './deferred-loader-settings';
@@ -41,29 +41,25 @@ export class DeferredLoaderComponent {
 
 
   private options = useSettings(this.loadingThreshold, this.minLoadingTime);
-  private readonly computedInputs = computed(() => ({
-    isLoading: this.isLoading(),
-    loader: this.loader(),
-    loadedContent: this.loadedContent(),
-    placeholder: this.placeholder(),
-    loadingThreshold: this.loadingThreshold(),
-    minLoadingTime: this.minLoadingTime(),
-    options: this.options(),
-  }));
 
-  private deferredLoaderService: DeferredLoaderService;
+  private readonly deferredLoaderService$ = new BehaviorSubject<DeferredLoaderService | undefined>(undefined);
+  private readonly serviceInitialized$ = this.deferredLoaderService$.pipe(filter(value => !!value)) as Observable<DeferredLoaderService>;
 
   constructor() {
-    effect(() => {
-      console.log(this.ref());
-      
+    toObservable(this.options).pipe(
+      take(1),
+      takeUntilDestroyed()
+    ).subscribe((options) => {
+      this.deferredLoaderService$.next(new DeferredLoaderService(options));
     });
 
-    this.deferredLoaderService = new DeferredLoaderService();
-
-    toObservable(this.computedInputs).pipe(
-      switchMap(({isLoading, options}) => this.deferredLoaderService.calculateLoadingState(isLoading, options)),
-      distinctUntilChanged(),
+    this.serviceInitialized$.pipe(
+      switchMap((service) => {
+        return toObservable(this.isLoading).pipe(
+          switchMap(isLoading => service.calculateLoadingState(isLoading)),
+          distinctUntilChanged(),
+        )
+      }),
       takeUntilDestroyed(),
     ).subscribe((result) => {
       this.ref().clear();

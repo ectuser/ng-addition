@@ -13,17 +13,19 @@ const states: Record<LoadingState, LoadingState> = {
 export class DeferredLoaderService {
   private lastEmitTime = 0;
 
-  public calculateLoadingState(showLoader: boolean | undefined, loadingOptions: DeferredLoaderOptions): Observable<LoadingState> {
+  constructor(private loadingOptions: DeferredLoaderOptions) {}
+
+  public calculateLoadingState(showLoader: boolean | undefined): Observable<LoadingState> {
     const currentTime = Date.now();
 
     if (!showLoader) {
       // Calculate the elapsed time since the last false emission
       const elapsedTime = currentTime - this.lastEmitTime;
       
-      if (elapsedTime < loadingOptions.minLoadingTime) {
+      if (elapsedTime < this.loadingOptions.minLoadingTime) {
         // Delay emitting false to ensure it stays visible for at least `minLoadingTime`
         return of(states.finished).pipe(
-          delay(loadingOptions.minLoadingTime - elapsedTime),
+          delay(this.loadingOptions.minLoadingTime - elapsedTime),
           tap(() => this.lastEmitTime = Date.now()),
           startWith(states.loading),
         );
@@ -36,7 +38,7 @@ export class DeferredLoaderService {
 
     // If loading is true, emit loading within `loadingThreshold`
     return of(states.loading).pipe(
-      delay(loadingOptions.loadingThreshold),
+      delay(this.loadingOptions.loadingThreshold),
       tap(() => this.lastEmitTime = Date.now()),
       startWith(states.started),
     );

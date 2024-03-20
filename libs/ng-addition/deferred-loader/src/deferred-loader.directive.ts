@@ -53,7 +53,7 @@ export class DeferredLoaderDirective {
    */
   public readonly deferredLoaderMinLoadingTime = input<DeferredLoaderOptions['minLoadingTime']>();
 
-  private options = useSettings(this.deferredLoaderLoadingThreshold, this.deferredLoaderMinLoadingTime);
+  private readonly options = useSettings(this.deferredLoaderLoadingThreshold, this.deferredLoaderMinLoadingTime);
 
   private readonly computedInputs = computed(() => ({
     deferredLoader: this.deferredLoader(),
