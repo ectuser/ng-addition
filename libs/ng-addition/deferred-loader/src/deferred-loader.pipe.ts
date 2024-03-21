@@ -15,7 +15,7 @@ export class DeferredLoaderPipe implements PipeTransform {
   private deferredLoaderService: DeferredLoaderService;
 
   constructor(@Inject(DEFERRED_LOADER_OPTIONS) private loaderOptions: DeferredLoaderOptions) {
-    this.deferredLoaderService = new DeferredLoaderService();
+    this.deferredLoaderService = new DeferredLoaderService(this.loaderOptions);
   }
 
   transform(showLoader: boolean | undefined, loadingThreshold?: number, minLoadingTime?: number): Observable<LoadingState> {

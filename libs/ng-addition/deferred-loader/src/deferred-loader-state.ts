@@ -28,7 +28,7 @@ export class DeferredLoaderState {
 
   public handleIsLoading(loading$: Observable<boolean>) {
     return this.serviceInitialized$.pipe(
-      switchMap((service) => {
+      switchMap(service => {
         return loading$.pipe(
           switchMap(isLoading => service.calculateLoadingState(isLoading)),
           distinctUntilChanged(),

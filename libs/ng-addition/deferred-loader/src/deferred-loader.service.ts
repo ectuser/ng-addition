@@ -15,17 +15,22 @@ export class DeferredLoaderService {
 
   constructor(private loadingOptions: DeferredLoaderOptions) {}
 
-  public calculateLoadingState(showLoader: boolean | undefined): Observable<LoadingState> {
+  public calculateLoadingState(
+    showLoader: boolean | undefined,
+    loadingOptions?: DeferredLoaderOptions,
+  ): Observable<LoadingState> {
     const currentTime = Date.now();
+
+    const options = this.assembleOptions(loadingOptions);
 
     if (!showLoader) {
       // Calculate the elapsed time since the last false emission
       const elapsedTime = currentTime - this.lastEmitTime;
       
-      if (elapsedTime < this.loadingOptions.minLoadingTime) {
+      if (elapsedTime < options.minLoadingTime) {
         // Delay emitting false to ensure it stays visible for at least `minLoadingTime`
         return of(states.finished).pipe(
-          delay(this.loadingOptions.minLoadingTime - elapsedTime),
+          delay(options.minLoadingTime - elapsedTime),
           tap(() => this.lastEmitTime = Date.now()),
           startWith(states.loading),
         );
@@ -38,9 +43,21 @@ export class DeferredLoaderService {
 
     // If loading is true, emit loading within `loadingThreshold`
     return of(states.loading).pipe(
-      delay(this.loadingOptions.loadingThreshold),
+      delay(options.loadingThreshold),
       tap(() => this.lastEmitTime = Date.now()),
       startWith(states.started),
     );
+  }
+
+  private assembleOptions(loadingOptions?: DeferredLoaderOptions): DeferredLoaderOptions {
+    let options: DeferredLoaderOptions = {
+      ...this.loadingOptions,
+    };
+
+    if (loadingOptions) {
+      options = {...options, ...loadingOptions};
+    }
+
+    return options;
   }
 }
