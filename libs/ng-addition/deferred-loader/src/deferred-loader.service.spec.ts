@@ -64,17 +64,13 @@ describe('DeferredLoaderService', () => {
       expect(spy).toHaveBeenLastCalledWith(states.finished);
     }));
 
-    it('emit "loading" and then "finished" if request took more than `loadingThreshold`', fakeAsync(() => {
+    it('emit "loading" and then "finished" if request took more than `loadingThreshold`. Loading should be shown for at least `minLoadingTime`', fakeAsync(() => {
       const loading = new ReplaySubject<boolean>(1);
       const spy = jest.fn();
 
       loading.pipe(
         switchMap(isLoading => service.calculateLoadingState(isLoading)),
-      ).subscribe((result) => {
-        console.log(result);
-        
-        spy(result);
-      });
+      ).subscribe(spy);
 
       loading.next(true);
 
@@ -87,9 +83,19 @@ describe('DeferredLoaderService', () => {
 
       loading.next(false);
 
+      // request took longer than `loadingThreshold`, then we are showing loading for at least `minLoadingTime`
+      
+      expect(spy).toHaveBeenLastCalledWith(states.loading);
+
+      tick(200);
+
+      // still showing loading because `minLoadingTime` was not passed
+
       expect(spy).toHaveBeenLastCalledWith(states.loading);
 
       tick(600);
+
+      // finally it is passed `minLoadingTime` ms, then stop show loading
 
       expect(spy).toHaveBeenLastCalledWith(states.finished);
     }));

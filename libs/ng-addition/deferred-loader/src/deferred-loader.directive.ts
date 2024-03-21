@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, booleanAttribute } from '@angular/core';
+import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, booleanAttribute, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { DeferredLoaderOptions } from './deferred-loader-settings';
 import { DeferredLoaderState } from './deferred-loader-state';
+import { isPlatformBrowser } from '@angular/common';
 
 
 /**
@@ -52,6 +53,8 @@ export class DeferredLoaderDirective {
 
   private readonly deferredLoaderState = new DeferredLoaderState(this.deferredLoaderLoadingThreshold, this.deferredLoaderMinLoadingTime);
 
+  private readonly platformId = inject(PLATFORM_ID);
+
   constructor(
     private viewContainer: ViewContainerRef,
     private templateRef: TemplateRef<unknown>,
@@ -60,29 +63,43 @@ export class DeferredLoaderDirective {
 
     const loading$ = toObservable(this.deferredLoader);
 
-    this.deferredLoaderState.handleIsLoading(loading$)
-      .pipe(takeUntilDestroyed())
-      .subscribe(loadingState => {
-        this.clearViewContainer();
-        if (loadingState === 'loading') {
-          this.showAppliedTemplate();
-        } else if (loadingState === 'finished') {
-          this.showElseTemplate();
-        }
+    if (isPlatformBrowser(this.platformId)) {
+      // // This intricate logic operates exclusively within the browser to prevent prolonged rendering of the loading spinner on the server.
 
-        this.cdr.markForCheck();
+      this.deferredLoaderState.handleIsLoading(loading$)
+        .pipe(takeUntilDestroyed())
+        .subscribe(loadingState => {
+          this.clearViewContainer();
+          if (loadingState === 'loading') {
+            this.renderLoader();
+          } else if (loadingState === 'finished') {
+            this.renderContent();
+          }
+
+          this.cdr.markForCheck();
+        });
+    } else {
+      // on server we render loading spinner as it is
+
+      loading$.pipe(takeUntilDestroyed()).subscribe((loading) => {
+        if (loading) {
+          this.renderLoader();
+        } else {
+          this.renderContent();
+        }
       });
+    }
   }
 
   private clearViewContainer() {
     this.viewContainer.clear();
   }
 
-  private showAppliedTemplate() {
+  private renderLoader() {
     this.viewContainer.createEmbeddedView(this.templateRef);
   }
 
-  private showElseTemplate() {
+  private renderContent() {
     const elseTemplate = this.deferredLoaderElse();
 
     if (elseTemplate) {
