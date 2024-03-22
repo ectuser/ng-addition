@@ -1,10 +1,9 @@
-import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, Inject, computed } from '@angular/core';
+import { ChangeDetectorRef, Directive, TemplateRef, ViewContainerRef, input, booleanAttribute, inject, PLATFORM_ID } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
-import { Observable, switchMap } from 'rxjs';
-
-import { DeferredLoaderOptions, DEFERRED_LOADER_OPTIONS } from './deferred-loader-settings';
-import { DeferredLoaderService } from './deferred-loader.service';
+import { DeferredLoaderOptions } from './deferred-loader-settings';
+import { DeferredLoaderState } from './deferred-loader-state';
+import { isPlatformBrowser } from '@angular/common';
 
 
 /**
@@ -31,7 +30,7 @@ import { DeferredLoaderService } from './deferred-loader.service';
   standalone: true,
 })
 export class DeferredLoaderDirective {
-  public readonly deferredLoader = input.required<boolean | undefined>();
+  public readonly deferredLoader = input.required<boolean, boolean | string | undefined | null>({transform: booleanAttribute});
   /**
    * Template to display when loading is false
    */
@@ -52,61 +51,55 @@ export class DeferredLoaderDirective {
    */
   public readonly deferredLoaderMinLoadingTime = input<DeferredLoaderOptions['minLoadingTime']>();
 
-  private loadingOptions = computed(() => {
-    const loadingThreshold = this.deferredLoaderLoadingThreshold() ?? this.loaderOptions.loadingThreshold;
-    const minLoadingTime = this.deferredLoaderMinLoadingTime() ?? this.loaderOptions.minLoadingTime;
+  private readonly deferredLoaderState = new DeferredLoaderState(this.deferredLoaderLoadingThreshold, this.deferredLoaderMinLoadingTime);
 
-    return {
-      ...this.loaderOptions,
-      loadingThreshold,
-      minLoadingTime,
-    };
-  });
-
-  private readonly showLoader$: Observable<boolean>;
-  private readonly computedInputs = computed(() => ({
-    deferredLoader: this.deferredLoader(),
-    deferredLoaderElse: this.deferredLoaderElse(),
-    deferredLoaderLoadingThreshold: this.deferredLoaderLoadingThreshold(),
-    deferredLoaderMinLoadingTime: this.deferredLoaderMinLoadingTime(),
-    loadingOptions: this.loadingOptions(),
-  }));
-
-  private deferredLoaderService: DeferredLoaderService;
+  private readonly platformId = inject(PLATFORM_ID);
 
   constructor(
-    @Inject(DEFERRED_LOADER_OPTIONS) private loaderOptions: DeferredLoaderOptions,
     private viewContainer: ViewContainerRef,
     private templateRef: TemplateRef<unknown>,
     private cdr: ChangeDetectorRef,
   ) {
-    this.deferredLoaderService = new DeferredLoaderService();
 
-    this.showLoader$ = toObservable(this.computedInputs).pipe(
-      switchMap(({deferredLoader, loadingOptions}) => this.deferredLoaderService.calculateLoadingState(deferredLoader, loadingOptions))
-    );
+    const loading$ = toObservable(this.deferredLoader);
 
-    this.showLoader$.pipe(takeUntilDestroyed()).subscribe(loading => {
-      this.clearViewContainer();
-      if (loading) {
-        this.showAppliedTemplate();
-      } else {
-        this.showElseTemplate();
-      }
+    if (isPlatformBrowser(this.platformId)) {
+      // // This intricate logic operates exclusively within the browser to prevent prolonged rendering of the loading spinner on the server.
 
-      this.cdr.markForCheck();
-    });
+      this.deferredLoaderState.handleIsLoading(loading$)
+        .pipe(takeUntilDestroyed())
+        .subscribe(loadingState => {
+          this.clearViewContainer();
+          if (loadingState === 'loading') {
+            this.renderLoader();
+          } else if (loadingState === 'finished') {
+            this.renderContent();
+          }
+
+          this.cdr.markForCheck();
+        });
+    } else {
+      // on server we render loading spinner as it is
+
+      loading$.pipe(takeUntilDestroyed()).subscribe((loading) => {
+        if (loading) {
+          this.renderLoader();
+        } else {
+          this.renderContent();
+        }
+      });
+    }
   }
 
   private clearViewContainer() {
     this.viewContainer.clear();
   }
 
-  private showAppliedTemplate() {
+  private renderLoader() {
     this.viewContainer.createEmbeddedView(this.templateRef);
   }
 
-  private showElseTemplate() {
+  private renderContent() {
     const elseTemplate = this.deferredLoaderElse();
 
     if (elseTemplate) {

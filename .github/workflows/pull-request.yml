@@ -1,0 +1,29 @@
+name: Pull request
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    if: '! github.event.pull_request.draft'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/prepare
+      - name: Build
+        run: npm run build
+
+  checks:
+    runs-on: ubuntu-latest
+    name: Test and lint
+    if: '! github.event.pull_request.draft'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/prepare
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm run test
