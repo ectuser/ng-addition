@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
-    if: github.event.pull_request.draft == false
+    if: '! github.event.pull_request.draft'
 
     steps:
       - uses: actions/checkout@v4
@@ -18,7 +18,7 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     name: Test and lint
-    if: github.event.pull_request.draft == false
+    if: '! github.event.pull_request.draft'
 
     steps:
       - uses: actions/checkout@v4
