@@ -4,17 +4,17 @@ on:
   pull_request:
 
 jobs:
-  if-not-draft:
-    if: github.event.pull_request.draft == true
-    runs-on: ubuntu-latest
-    steps:
-    - name: Fails in order to indicate that pull request needs to be marked as ready to review and unit tests workflow needs to pass.
-      run: exit 1
+  # if-not-draft:
+  #   if: github.event.pull_request.draft == true
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Fails in order to indicate that pull request needs to be marked as ready to review and unit tests workflow needs to pass.
+  #     run: exit 1
 
   build:
     runs-on: ubuntu-latest
     name: Build
-    needs: if-not-draft
+    # needs: if-not-draft
 
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,7 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     name: Test and lint
-    needs: if-not-draft
+    # needs: if-not-draft
 
     steps:
       - uses: actions/checkout@v4
