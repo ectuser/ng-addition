@@ -1,4 +1,4 @@
-import { Inject, Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 
 import { Observable } from 'rxjs';
 
@@ -12,9 +12,11 @@ import { DeferredLoaderService, LoadingState } from './deferred-loader.service';
   standalone: true,
 })
 export class DeferredLoaderPipe implements PipeTransform {
-  private deferredLoaderService: DeferredLoaderService;
+  private readonly deferredLoaderService: DeferredLoaderService;
 
-  constructor(@Inject(DEFERRED_LOADER_OPTIONS) private loaderOptions: DeferredLoaderOptions) {
+  private readonly loaderOptions = inject(DEFERRED_LOADER_OPTIONS);
+
+  constructor() {
     this.deferredLoaderService = new DeferredLoaderService(this.loaderOptions);
   }
 
